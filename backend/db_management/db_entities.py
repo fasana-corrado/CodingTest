@@ -27,6 +27,16 @@ class Person(Base):
         self.gender = gender
         self.ip_address = ip_address
 
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'first_name': self.first_name,
+            'last_name': self.last_name,
+            'email': self.email,
+            'gender': self.gender,
+            'ip_address': self.ip_address
+        }
+
 class Country(Base):
     __tablename__ = "country"
 

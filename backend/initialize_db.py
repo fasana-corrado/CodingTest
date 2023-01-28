@@ -80,8 +80,7 @@ def init_db():
         logging.info("Data exported successfully from csv files to relational database")
     except sqlalchemy.exc.SQLAlchemyError as e:
         logging.error(e)
-        return
-    
+        return    
 
 if __name__ == "__main__":
     init_db()
