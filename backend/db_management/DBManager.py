@@ -1,11 +1,12 @@
 from mysql.connector import connect, Error, errorcode
 class DBManager:
     '''
-    This class allows to manage the connection with the database
+    This class allows to manage the connection to the relational database
     '''
     
     def __init__(self, db_connection_data, is_new):
         '''
+            The constructor sets the values local to the instance of the DBManager concerning the database connection data
             PARAMETERS
             db_connection_data -> A dictionary containing the database connection parameters (keys: host, db_name, user, psw)
             isNew -> A boolean variable indicating whether the connections is use for a database that still needs to be created
@@ -20,7 +21,8 @@ class DBManager:
             This function allows to obtain a connection to the database.
         '''
         try:           
-            #If necessary, it is possible to add a few parameters to realise a connection pooling mechanism
+            '''If necessary, it is possible to add a few parameters to realise a connection pooling mechanism which can be useful to
+               avoid establishing too many connections to the database'''
             connection = connect(host=self.host,
                                 database=self.database,
                                 user=self.user,
@@ -43,10 +45,3 @@ class DBManager:
         '''
         if connection:
             connection.close()
-
-    def set_database(self, new_database):
-        '''
-            This function allows to update the database information. Thus, subsequent connections will be established on the newly
-            specified database
-        '''
-        self.database = new_database
