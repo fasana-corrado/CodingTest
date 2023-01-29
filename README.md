@@ -1,1 +1,1 @@
-ReadMe file
+Per alcuni dettagli circa le scelte adottate e il procedimento seguito, fare riferimento al file "details.txt".

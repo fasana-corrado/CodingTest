@@ -1,0 +1,62 @@
+DATABASE
+Il database è stato progettato con sole 2 tabelle: la tabella Person e la tabella Country.
+Potrebbe essere utile creare una tabella Country(id, code) contenente tuple del tipo (1, "IT").
+Dopo di che, si potrebbe creare una tabella CountryPerson(person_id, country_id) per evitare
+di replicare più volte il codice della nazione (e.g., "IT"). Tuttavia, considerando che questo
+codice è di soli 2 caratteri e che non sono presenti altre informazioni circa Country, ho ritenuto
+non vantaggioso aggiungere un'ulteriore tabella.
+
+FUNCTIONALITIES
+
+1) Il database e le tabelle sono generabili direttamente da uno script python. In alternativa,
+si sarebbe potuto creare il database e le tabelle da mysql e usare lo script solo per esportare
+i dati dai file csv al database.
+
+La gestione del database è stata realizzata usando la libreria sqlalchemy in modo tale che fosse
+possibile creare delle classi Person e Country e gestire in modo automatico l'interazione tra
+le entità presenti nel database e le istanze attive durante l'esecuzione.
+
+Il file old_initialize_db.py contiene una possibile alternativa realizzata come prima versione
+in cui la gestione del database avviene in maniera più esplicita usando mysql.connector.
+
+2) I dati di connessione al database sono letti da un file .env. Questo consente di caricare delle
+variabili ambiente al momento dell'esecuzione dello script. Su GitHub è presente un file .env_example
+che mostra come deve essere strutturato il file .env per poter eseguire il codice.
+
+In caso di messa in produzione, in alcuni casi è possibile usare direttamente il file .env. In alternativa
+è possibile realizzare un meccanismo di autenticazione che richieda esplicitamente username e password
+per poter accedere al database, oppure utilizzare un file di configurazione a parte in cui sono memorizzate le
+credenziali. Questo file dovrà necessariamente essere posto in un'area non accessibile facilmente a chi non ha
+diritto di accedervi.
+
+3) La ripartizione delle persone per genere e quella dell'indirizzo ip per classi è calcolata in
+termini percentuali. Ciò significa che una volta estratti i dati dal database, viene calcolato il numero
+di occorrenze per ogni caso e diviso per il totale, ottenendo una frequenza relativa.
+
+4) Gli attributi dominio (email), genere e country sono di tipo categorico nominale. Per questo motivo,
+la correlazione tra queste variabili è stata calcolata usando il metodo Cramer's V che consente di
+misurare il grado di associazione tra questi tipi di variabili. Il metodo è basato sul test del chi quadrato
+e quindi sull'uso di una tabella di contingenza. Un valore prossimo a 1 indica un'alta correlazione. viceversa,
+un valore prossimo a 0 indica che non c'è correlazione tra le variabili.
+Analizzando i dati visivamente si nota che difficilmente ci può essere correlazione tra dominio e country
+o dominio e genere. Questo è confermato dal metodo Cramer's V.
+
+5) Esistono diversi pattern ricorrenti delle mail. Per poter trovare quello più ricorrente,
+sono stati selezionati alcuni tra i pattern più diffusi che sono poi stati confrontati con le mail presenti
+nel database. Siccome in molti casi (così come si vede anche dai dati), un pattern è seguito da
+altri caratteri (e.g., nome.cognome01@mail.com, ncognomexx@mail.com), al posto di verificare l'esatta coincidenza
+tra il pattern e la mail, si è verificato che la mail inizi col pattern e possa quindi essere seguita da altri
+caratteri.
+
+6) Per poter verificare in quale country ci sono più scuole sarebbe necessario avere a disposizione l'informazione sulle
+scuole, che nei dati forniti non è presente. Qualora questo sia di elevato interesse, si potrebbe utilizzare web scraping
+per ottenere questa informazione da qualche sito o database già disponibile ed integrare l'informazione con i dati già a
+disposizione.
+
+Altre analisi di interesse dipendono altamente dallo scopo per cui i dati devono essere utilizzati.
+Ulteriori analisi inserite sono:
+	- Verifica della correlazione tra country e gender
+	- Ripartizione del gender per country (potrebbe essere una correlazione legata alla mentalità e alla tradizione della
+	nazione
+	- Ripartizione delle persone per ogni coppia <country, gender>
+
