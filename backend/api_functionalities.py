@@ -1,28 +1,10 @@
-from backend.db_management.db_entities import Person, Country
-import re
-import ipaddress
+from db_management.db_entities import Person, Country
 from sqlalchemy.orm import Session, sessionmaker
 from sqlalchemy import select, func
 import pandas as pd
 import scipy.stats as stats
 import numpy as np
  
-
-def validate_ip_address(ip_address):
-    '''
-        This function allows to check whether a given ip address is valid or not
-
-        PARAMETERS
-        ip_address -> A string representing an ip_address
-
-        RETURNS
-        True if the ip_address is valid
-    '''
-    try:
-        ipaddress.ip_address(ip_address) #Raise a ValueError exception if the given ip_address is not valid
-        return True
-    except ValueError:
-        return False
 
 def compute_cramer_V_correlation(contingency_table):
     '''
@@ -59,21 +41,8 @@ def create_new_person(engine, first_name, last_name, email, gender, ip_address, 
 
         RETURNS
         Nothing if the operation was successfull, otherwise an Exception is thrown
-    '''
-    # Checking formats to ensure that the given parameters are acceptable before putting them in the database
-    if not first_name or not isinstance(first_name,str) or len(first_name) > 30 :
-        raise Exception("Invalid parameter 'first_name'. This parameter cannot be empty and should be a string of at most 30 characters long.")
-    elif not last_name or not isinstance(last_name,str) or len(last_name) > 30 :
-        raise Exception("Invalid parameter 'last_name'. This parameter cannot be empty and should be a string of at most 30 characters long.")
-    elif not email or not isinstance(email,str) or len(email) > 254 or not re.match(r"^[a-zA-Z0-9][a-zA-Z0-9._-]*@[a-zA-Z0-9]+[\[.]?[a-zA-Z0-9-]+]*\.[a-zA-Z]{2,4}$", email):
-        raise Exception("Invalid parameter 'email'. This parameter cannot be empty, should be a string of at most 254 characters long and should meet the usual email format requirements.")
-    elif not gender or not isinstance(gender,str) or len(gender) > 20 :
-        raise Exception("Invalid parameter 'gender'. This parameter cannot be empty and should be a string of at most 20 characters.")
-    elif not ip_address or not isinstance(ip_address,str) or not validate_ip_address(ip_address) :
-        raise Exception("Invalid parameter 'ip_address'. This parameter cannot be empty and should represent a valid IPv4 address.")
-    elif not country or not isinstance(country,str) or len(country) > 2 :
-        raise Exception("Invalid parameter 'country'. This parameter cannot be empty and should be a string of at most 2 characters long.")
-
+    '''    
+    
     #Format strings before putting them in the database to keep format consistency
     first_name = first_name.title() #Put first letter in upper case and everything else lower case
     last_name = last_name.title()   #Put first letter in upper case and everything else lower case
@@ -104,10 +73,6 @@ def get_people_by_country(engine, country):
         RETURNS
         A Pandas Dataframe containing the information of all people from the specified country
     '''
-    # Checking formats to ensure that the given parameters are acceptable before putting them in the database
-    if not country or not isinstance(country,str) or len(country) > 2 :
-        raise Exception("Invalid parameter 'country'. This parameter cannot be empty and should be a string of at most 2 characters long.")
-
     country = country.upper() #Put country in upper case
 
     # Create a new instance of Person and push it to the database
@@ -128,10 +93,6 @@ def get_people_count_by_country(engine, country):
         RETURNS
         An integer representing the count of all people from the specified country
     '''
-    # Checking formats to ensure that the given parameters are acceptable before putting them in the database
-    if not country or not isinstance(country,str) or len(country) > 2 :
-        raise Exception("Invalid parameter 'country'. This parameter cannot be empty and should be a string of at most 2 characters long.")
-    
     country = country.upper() #Put country in upper case
 
     Session = sessionmaker(engine, expire_on_commit = False)
@@ -230,7 +191,7 @@ def get_most_common_domain(engine):
 
 def get_country_domain_correlation(engine):
     '''
-        This function allows to obtain the most common email domain
+        This function allows to obtain the country-domain correlation
 
         PARAMETERS
         engine -> A sqlalchemy engine to interact with the database
@@ -255,13 +216,13 @@ def get_country_domain_correlation(engine):
 
 def get_gender_domain_correlation(engine):
     '''
-        This function allows to obtain the most common email domain
+        This function allows to obtain the gender-domain correlation
 
         PARAMETERS
         engine -> A sqlalchemy engine to interact with the database
 
         RETURNS
-        The correlation between gender and domain computed using Cramer-V method
+        The correlation between country and domain computed using Cramer-V method
     '''
     
     Session = sessionmaker(engine, expire_on_commit = False)
@@ -314,4 +275,52 @@ def get_common_email_patterns(engine):
     df['first'] = df.apply(lambda x: x["email"].startswith(x["first_name"]) and not x['first.last'] and not x['firstlast'] and not x['firstl'] and not x['first.l'] and not x["flast"], axis=1)
     df['last'] = df.apply(lambda x: x["email"].startswith(x["last_name"]) and not x['last.first'] and not x['lastfirst'], axis=1)
     
-    return df.iloc[:,3:].sum().sort_values(ascending=False)
+    return (df.iloc[:,3:].sum().sort_values(ascending=False)).to_frame(name="Count")
+    
+
+def get_gender_country_correlation(engine):
+    '''
+        This function allows to obtain the gender-country correlation
+
+        PARAMETERS
+        engine -> A sqlalchemy engine to interact with the database
+
+        RETURNS
+        The correlation between country and domain computed using Cramer-V method
+    '''
+    
+    Session = sessionmaker(engine, expire_on_commit = False)
+    
+    # Retrieve country and gender for each person
+    with Session() as session:     
+        results = session.query(Person.gender, Country.country).join(Country).filter(Person.id == Country.person_id).all()
+
+    df = pd.DataFrame.from_records([{"Gender": r[0], "Country": r[1] } for r in results])
+    
+    contingency_table = pd.crosstab(df["Gender"], df["Country"]).to_numpy()
+
+    return compute_cramer_V_correlation(contingency_table)
+
+def get_gender_distribution_by_country(engine):
+    '''
+        This function allows to obtain the gender distribution over countries
+
+        PARAMETERS
+        engine -> A sqlalchemy engine to interact with the database
+
+        RETURNS
+        A Pandas Dataframe containing the information concerning the gender distribution
+    '''
+    
+    Session = sessionmaker(engine, expire_on_commit = False)
+    
+    with Session() as session:        
+        results = session.query(Country.country,Person.gender,func.count("*")).join(Country).filter(Person.id == Country.person_id).group_by(Country.country,Person.gender).all()
+    
+    df = pd.DataFrame.from_records([{"Country": p[0], "Gender": p[1], "Count": p[2]} for p in results])
+    counts = df.groupby("Country")['Count'].sum()
+    
+    df["Distribution (%)"] = df.apply(lambda x: x["Count"]/counts[x["Country"]]* 100, axis=1)
+
+    return df.sort_values("Country")
+

@@ -56,7 +56,5 @@ disposizione.
 Altre analisi di interesse dipendono altamente dallo scopo per cui i dati devono essere utilizzati.
 Ulteriori analisi inserite sono:
 	- Verifica della correlazione tra country e gender
-	- Ripartizione del gender per country (potrebbe essere una correlazione legata alla mentalità e alla tradizione della
-	nazione
-	- Ripartizione delle persone per ogni coppia <country, gender>
-
+	- Ripartizione del gender per country (potrebbe esserci una correlazione legata alla mentalità e alla tradizione della
+	nazione)
