@@ -20,8 +20,8 @@ Nel caso dell'attributo email, è stato imposto un vincolo per accettare solo al
 Tale vincolo è solo una delle tante versioni disponibili, ma è stato parzialmente adattato per accettare
 anche mail del tipo 'username@something.somethingelse.something' già presenti nei dati forniti.
 
-I file old_initialize_db.py, DBManager.py e db.utils.py contengono una possibile alternativa realizzata come prima versione
-in cui la gestione del database avviene in maniera più esplicita usando mysql.connector.
+I file old_initialize_db.py, DBManager.py e db.utils.py (presenti nel branch develop) contengono una possibile alternativa
+realizzata come prima versione in cui la gestione del database avviene in maniera più esplicita usando mysql.connector.
 In entrambe le versioni viene utilizzato un meccanismo molto base di logging per salvare lo stato delle operazioni effettuate
 durante l'inizializzazione. In un caso più reale, altre informazioni quali data e ora andrebbero inserite nel log.
 
@@ -59,8 +59,16 @@ scuole, che nei dati forniti non è presente. Qualora questo sia di elevato inte
 per ottenere questa informazione da qualche sito o database già disponibile ed integrare l'informazione con i dati già a
 disposizione.
 
+7) Le api sono accessibili tramite il notebook invoke_api.ipynb presente nella cartella frontend.
+Il file api_notebook.ipynb presente in develop è una precedente versione usata solamente per velocizzare i test.
+Si faccia riferimento a invoke_api.ipynb per testare le funzionalità rese disponibili usando fastapi.
+
 Altre analisi di interesse dipendono altamente dallo scopo per cui i dati devono essere utilizzati.
 Ulteriori analisi inserite sono:
 	- Verifica della correlazione tra country e gender
 	- Ripartizione del gender per country (potrebbe esserci una correlazione legata alla mentalità e alla tradizione della
 	nazione)
+
+N.B. I valori usati per controllare il formato dei parametri inseriti (es. first_name, last_name, etc.), sono gli stessi del database.
+Si potrebbe creare un file di configurazione da cui leggerli. In questo caso, sono stati immessi direttamente nel codice per semplicità,
+in quanto i parametri non erano molti.
