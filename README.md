@@ -4,10 +4,12 @@ Per alcuni dettagli circa le scelte adottate e il procedimento seguito, fare rif
 Di seguito viene mostrata la **procedura da seguire per poter testare il programma** (supponendo che python, pip e mysql siano già installati sul dispositivo).
 
 **1) Creare un nuovo virtual environment per il progetto**
-   * Es. in Windows usando powershell:
-   * CMD: pip install virtualenv
-   * CMD: cd project_folder
-   * CMD: virtualenv environment_name
+Es. in Windows usando powershell:
+```
+$ pip install virtualenv
+$ cd project_folder
+$ virtualenv environment_name
+```
 **2) Attivare il nuovo **environment**
         CMD: environment_name\Scripts\activate
 **3) Clonare la repository github all'interno della cartella (è necessario aver installato git)**
