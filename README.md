@@ -13,7 +13,7 @@ virtualenv ENVIRONMENT_NAME
 
 **2) Attivare il nuovo environment**
 ```
-environment_name\Scripts\activate
+ENVIRONMENT_NAME\Scripts\activate
 ```
 
 **3) Clonare la repository github all'interno della cartella (è necessario aver installato git)**
