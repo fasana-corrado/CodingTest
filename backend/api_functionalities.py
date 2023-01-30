@@ -95,7 +95,7 @@ def get_people_by_country(engine, country):
         return pd.DataFrame.from_records([p[0].to_dict() for p in results])
     return None
 
-def get_people_count_by_country(engine, country):
+def get_people_count_by_country(engine):
     '''
         This function allows to obtain the number of users given a country.
 
@@ -106,14 +106,15 @@ def get_people_count_by_country(engine, country):
         RETURNS
         An integer representing the count of all people from the specified country.
     '''
-    country = country.upper() #Put country in upper case
-
     Session = sessionmaker(engine)
-    query  = select(func.count("*")).select_from(Person).join(Country).filter(Person.id == Country.person_id, Country.country == country)
     with Session() as session:        
-        count = session.execute(query).one()
+        count = session.query(Country.country,func.count("*")).select_from(Person).join(Country).group_by(Country.country).all()
     
-    return count[0]
+    if len(count) != 0:
+        df = pd.DataFrame.from_records([{"Country":p[0], "Count": p[1]} for p in count])
+        return df.sort_values("Count", ascending=False)
+    else:
+        return None
 
 def get_people_gender_distribution(engine):
     '''
@@ -133,7 +134,7 @@ def get_people_gender_distribution(engine):
     if len(results) != 0:
         df = pd.DataFrame.from_records([{"Gender":p[0], "Count": p[1]} for p in results])
         df["Distribution (%)"] = df["Count"] / df["Count"].sum() * 100
-        return df
+        return df.sort_values("Distribution (%)", ascending=False)
     else:
         return None
 
@@ -171,7 +172,7 @@ def get_ip_address_distribution_by_class(engine):
         df["Count"] = class_count.values()
         df["Distribution (%)"] = df["Count"] / df["Count"].sum() * 100
 
-        return df
+        return df.sort_values("Distribution (%)", ascending=False)
     else:
         return None
 
@@ -223,7 +224,7 @@ def get_country_domain_correlation(engine):
     
     # Retrieve email and country for each person
     with Session() as session:     
-        results = session.query(Person.email, Country.country).join(Country).filter(Person.id == Country.person_id).all()
+        results = session.query(Person.email, Country.country).join(Country).all()
     
     if len(results) != 0:
         # Modify the returned data to obtain the pairs <domain, country>
@@ -330,7 +331,7 @@ def get_gender_country_correlation(engine):
     
     # Retrieve country and gender for each person
     with Session() as session:     
-        results = session.query(Person.gender, Country.country).join(Country).filter(Person.id == Country.person_id).all()
+        results = session.query(Person.gender, Country.country).join(Country).all()
 
     if len(results) != 0:
         df = pd.DataFrame.from_records([{"Gender": r[0], "Country": r[1] } for r in results])
@@ -355,7 +356,7 @@ def get_gender_distribution_by_country(engine):
     Session = sessionmaker(engine)
     
     with Session() as session:        
-        results = session.query(Country.country,Person.gender,func.count("*")).join(Country).filter(Person.id == Country.person_id).group_by(Country.country,Person.gender).all()
+        results = session.query(Country.country,Person.gender,func.count("*")).join(Country).group_by(Country.country,Person.gender).all()
     
     if len(results) != 0:
         df = pd.DataFrame.from_records([{"Country": p[0], "Gender": p[1], "Count": p[2]} for p in results])

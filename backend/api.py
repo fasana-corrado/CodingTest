@@ -74,13 +74,13 @@ def get_people_by_country(country: str):
         raise HTTPException(status_code=500)
     
 @app.get("/get_people_count_by_country")
-def get_people_count_by_country(country: str):
-    # Checking formats to ensure that the given parameters are acceptable before putting them in the database
-    if not country or len(country) > 2 :
-        return "Invalid parameter 'country'. This parameter cannot be empty and should be a string of at most 2 characters long."
+def get_people_count_by_country():
     try:
-        count = api_functionalities.get_people_count_by_country(engine, country)
-        return f"The number of users for country {country} is {count}."
+        df = api_functionalities.get_people_count_by_country(engine)
+        if df is not None:
+            return df.to_dict()
+        else:
+            return "No result found in the database."
     except Exception as e:
         raise HTTPException(status_code=500)
 
