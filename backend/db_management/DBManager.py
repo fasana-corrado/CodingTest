@@ -15,7 +15,7 @@ class DBManager:
             The constructor sets the values local to the instance of the DBManager concerning the database connection data
             PARAMETERS
             db_connection_data -> A dictionary containing the database connection parameters (keys: host, db_name, user, psw)
-            isNew -> A boolean variable indicating whether the connections is use for a database that still needs to be created
+            isNew -> A boolean variable indicating whether the connection is used for a database that still needs to be created
         '''
         self.host = db_connection_data["host"]
         self.database=  None if is_new else db_connection_data["db_name"]

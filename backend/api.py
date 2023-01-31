@@ -9,6 +9,7 @@ import api_functionalities
 import pandas as pd
 import ipaddress
 import re
+import logging
 
 app = FastAPI()
 
@@ -20,6 +21,7 @@ db_connection_data = {"host":os.environ.get('db_hostname'),
                         "user":os.environ.get('db_user'),
                         "psw":os.environ.get('db_psw')}
 engine = sqlalchemy.create_engine(f'mysql+mysqldb://{db_connection_data["user"]}:{db_connection_data["psw"]}@{db_connection_data["host"]}/{db_connection_data["db_name"]}') # Connect to database
+logging.basicConfig(filename=os.path.join("logs",'logs.log'), encoding='utf-8', level=logging.DEBUG)
 
 def validate_ip_address(ip_address):
     '''
@@ -57,6 +59,7 @@ def create_person(first_name: str, last_name: str, email: str, gender: str, ip_a
         api_functionalities.create_new_person(engine, first_name, last_name, email, gender, ip_address, country)
         return "Person created successfully."
     except Exception as e:
+        logging.error(e)
         raise HTTPException(status_code=500)
 
 @app.get("/get_people_by_country")
@@ -71,6 +74,7 @@ def get_people_by_country(country: str):
         else:
             return "No result found in the database."
     except Exception as e:
+        logging.error(e)
         raise HTTPException(status_code=500)
     
 @app.get("/get_people_count_by_country")
@@ -82,6 +86,7 @@ def get_people_count_by_country():
         else:
             return "No result found in the database."
     except Exception as e:
+        logging.error(e)
         raise HTTPException(status_code=500)
 
 @app.get("/get_people_gender_distribution")
@@ -93,6 +98,7 @@ def get_people_gender_distribution():
         else:
             return "No result found in the database."
     except Exception as e:
+        logging.error(e)
         raise HTTPException(status_code=500)
 
 @app.get("/get_ip_address_distribution_by_class")
@@ -104,6 +110,7 @@ def get_ip_address_distribution_by_class():
         else:
             return "No result found in the database."
     except Exception as e:
+        logging.error(e)
         raise HTTPException(status_code=500)
 
 @app.get("/get_most_common_domain")
@@ -115,6 +122,7 @@ def get_most_common_domain():
         else:
             return "No result found in the database."
     except Exception as e:
+        logging.error(e)
         raise HTTPException(status_code=500)
 
 @app.get("/get_country_domain_correlation")
@@ -126,6 +134,7 @@ def get_country_domain_correlation():
         else:
             return "No result found in the database."  
     except Exception as e:
+        logging.error(e)
         raise HTTPException(status_code=500)
 
 @app.get("/get_gender_domain_correlation")
@@ -137,6 +146,7 @@ def get_gender_domain_correlation():
         else:
             return "No result found in the database." 
     except Exception as e:
+        logging.error(e)
         raise HTTPException(status_code=500)
 
 @app.get("/get_common_email_patterns")
@@ -148,6 +158,7 @@ def get_common_email_patterns():
         else:
             return "No result found in the database."
     except Exception as e:
+        logging.error(e)
         raise HTTPException(status_code=500)
 
 @app.get("/get_gender_country_correlation")
@@ -159,6 +170,7 @@ def get_gender_country_correlation():
         else:
             return "No result found in the database." 
     except Exception as e:
+        logging.error(e)
         raise HTTPException(status_code=500)
 
 @app.get("/get_gender_distribution_by_country")
@@ -170,4 +182,5 @@ def get_gender_distribution_by_country():
         else:
             return "No result found in the database."
     except Exception as e:
+        logging.error(e)
         raise HTTPException(status_code=500)
