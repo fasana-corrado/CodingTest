@@ -22,17 +22,18 @@ ENVIRONMENT_NAME\Scripts\activate
 git clone https://github.com/fasana-corrado/CodingTest.git
 ```
 
-**4) Creare un utente su mysql che possa svolgere qualunque funzione (creare DB, creare tabelle, inserire dati, effettuare query, etc.)**
+**4) Rinominare il file '.env_example' presente nella cartella del progetto e chiamarlo '.env'.**
+Dopo di che, ***modificare i dati presenti all'interno** scegliendo "USER", "PASSWORD" e "DATABASE_NAME" che dovranno poi essere creati. Per eseguire il programma in locale, usare come "HOST_NAME" 'localhost'.
+
+**5) Creare un utente su mysql che possa svolgere qualunque funzione (creare DB, creare tabelle, inserire dati, effettuare query, etc.)**
+Lo username, la password e il nome del database devono essere gli stessi di quelli inseriti nel file '.env'
 ```
 mysql
 mysql > CREATE USER 'NEW_USER'@'localhost' IDENTIFIED BY 'NEW_PASSWORD';
-mysql > GRANT ALL PRIVILEGES ON 'NEW_DATABASE' TO 'NEW_USER'@'localhost' WITH GRANT OPTION;
+mysql > GRANT ALL PRIVILEGES ON NEW_DATABASE.* TO 'NEW_USER'@'localhost' WITH GRANT OPTION;
 ```
 N.B. In a real environment, the granted privileges should be limited to avoid giving users unlimited access to the database if this is
 not necessary.
-
-**5) Rinominare il file '.env_example' presente nella cartella del progetto e chiamarlo '.env'.**
-Dopo di che, ***modificare i dati presenti all'interno** utilizzando come "USER", "PASSWORD" e "DATABASE_NAME" quelli usati precedentemente durante la creazione dell'utente. Per eseguire il programma in locale, usare come "HOST_NAME" 'localhost'.
 
 **6) Installare tutte le librerie richieste usando il file 'requirements.txt' presente nella cartella del progetto.**
 ```
