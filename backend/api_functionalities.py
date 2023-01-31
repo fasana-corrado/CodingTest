@@ -29,7 +29,7 @@ def compute_cramer_V_correlation(contingency_table):
     k = contingency_table.shape[1]
     r = contingency_table.shape[0]
     
-    if k==1 and r==1: #Only 1 value for each variable => Full correlation
+    if k==1 or r==1: #Only 1 value for a variable => Full correlation
         return 1
     # Compute Cramer's V with correction
     phi2_tilde = max(0,chi2/n - (k -1)*(r -1)/(n-1))
