@@ -3,8 +3,8 @@ This file contains the implementation of the required functionalities.
 '''
 
 from db_management.db_entities import Person, Country
-from sqlalchemy.orm import Session, sessionmaker
-from sqlalchemy import select, func
+from sqlalchemy.orm import sessionmaker
+from sqlalchemy import func
 import pandas as pd
 import scipy.stats as stats
 import numpy as np
@@ -15,7 +15,7 @@ def compute_cramer_V_correlation(contingency_table):
         This function allows to compute the correlation between nominal variables.
 
         PARAMETERS
-        df -> A Pandas Dataframe representing a contingency table
+        contingency_table -> A Pandas Dataframe representing a contingency table
         
         RETURNS
         A value between 0 and 1 where 1 means full correlation and 0 no correlation.
@@ -26,14 +26,13 @@ def compute_cramer_V_correlation(contingency_table):
     
     # Compute number of observations
     n = np.sum(contingency_table)
-    minDim = min(contingency_table.shape)-1
 
     # Compute Cramer's V with correction
     k = contingency_table.shape[1]
     r = contingency_table.shape[0]
     phi2_tilde = max(0,chi2/n - (k -1)*(r -1)/(n-1))
-    k_tilde = k - ((k-1)^2)/(n-1)
-    r_tilde = r - ((r-1)^2)/(n-1)
+    k_tilde = k - ((k-1)**2)/(n-1)
+    r_tilde = r - ((r-1)**2)/(n-1)
 
     cramerV = np.sqrt(phi2_tilde/min(k_tilde-1,r_tilde-1))
 
@@ -67,7 +66,7 @@ def create_new_person(engine, first_name, last_name, email, gender, ip_address, 
     
     ''' expire_on_commit False allows to keep the object active even after commit so that the id assigned automatically by the database is available
         In this case, even if the person is inserted and the country is not due to some error, it is not probably a major issue. However, if it is
-        considered of major importance, a transaction con be used to rollback in case one of the two operations fail. '''
+        considered of major importance, a transaction could be used to rollback in case one of the two operations fail. '''
     with Session() as session:
             session.add(new_person)
             session.commit()
@@ -84,7 +83,7 @@ def get_people_by_country(engine, country):
         country -> A string representing a country.
 
         RETURNS
-        A Pandas Dataframe containing the information of all people from the specified country
+        A Pandas Dataframe containing the information of all people from the specified country.
     '''
     country = country.upper() # Put country in upper case
 
@@ -97,14 +96,14 @@ def get_people_by_country(engine, country):
 
 def get_people_count_by_country(engine):
     '''
-        This function allows to obtain the number of users given a country.
+        This function allows to obtain the number of users for each country.
 
         PARAMETERS
         engine -> A sqlalchemy engine to interact with the database.
         country -> A string representing a country.
 
         RETURNS
-        An integer representing the count of all people from the specified country.
+        An integer representing the count of all people for each country.
     '''
     Session = sessionmaker(engine)
     with Session() as session:        
@@ -267,7 +266,7 @@ def get_gender_domain_correlation(engine):
     
 def get_common_email_patterns(engine):
     '''
-        This function allows to obtain the most common email patter (e.g., name.surname).
+        This function allows to obtain the most common email patterns (e.g., first_name.last_name, flast_name, first_namel).
 
         PARAMETERS
         engine -> A sqlalchemy engine to interact with the database
@@ -278,7 +277,7 @@ def get_common_email_patterns(engine):
     
     Session = sessionmaker(engine)
     
-    # Retrieve email and gender for each person
+    # Retrieve first_name, last_name and email for each person
     with Session() as session:     
         results = session.query(Person.first_name, Person.last_name, Person.email).all()
     
@@ -289,7 +288,9 @@ def get_common_email_patterns(engine):
 
         df["first_name"] = df["first_name"].str.lower()
         df["last_name"] = df["last_name"].str.lower()
-
+        # Remove " ", "-", '.' and "'" from surname
+        df["last_name"] = df.apply(lambda x: x["last_name"].replace(' ','').replace('.','').replace('-','').replace("'",'') , axis=1)
+        
         # Compute most common email patterns
         df['firstlast'] = df.apply(lambda x: x["email"].startswith(x["first_name"]+x["last_name"]), axis=1)
         df['lastfirst'] = df.apply(lambda x: x["email"].startswith(x["last_name"]+x["first_name"]), axis=1)

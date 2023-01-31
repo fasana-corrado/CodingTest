@@ -11,8 +11,8 @@ import db_management.db_entities as db_entities
 
 def export_data_to_db(engine, data):
     '''
-    This function allows to create the tables needed to store the data in the database.
-    And to export data from the csv files to the relational database.
+    This function allows to create the tables needed to store the data in the database, to
+    export data from the csv files to the relational database.
 
     PARAMETERS
     data -> A dictionary containing the data to be stored in the database. The key should represent the name of the table, whereas the value
@@ -66,7 +66,7 @@ def init_db():
         return
 
     # Load data from file into pandas dataframe
-    # N.B. keep_default_na is set to 'False' since in the data there is a country named 'NA' which otherwise is threaded as NaN
+    # N.B. keep_default_na is set to 'False' since in the data there is a country named 'NA' which otherwise is considered as NaN
     persons_df = pd.read_csv(persons_data_file,sep=",", keep_default_na=False)
     countries_df = pd.read_csv(countries_data_file,sep=",", keep_default_na=False)
     

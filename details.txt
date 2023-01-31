@@ -3,7 +3,7 @@ DATABASE
 Il database è stato progettato con sole 2 tabelle: la tabella Person e la tabella Country.
 Potrebbe essere utile creare una tabella Country(id, code) contenente tuple del tipo (1, "IT").
 Dopo di che, si potrebbe creare una tabella CountryPerson(person_id, country_id) per evitare
-di replicare più volte il codice della nazione (e.g., "IT"). Tuttavia, considerando che questo
+di replicare più volte il codice della nazione (e.g., "IT", "FR"). Tuttavia, considerando che questo
 codice è di soli 2 caratteri e che non sono presenti altre informazioni circa Country, ho ritenuto
 non vantaggioso aggiungere un'ulteriore tabella.
 
@@ -42,10 +42,8 @@ di occorrenze per ogni caso e diviso per il totale, ottenendo una frequenza rela
 4) Gli attributi dominio (email), genere e country sono di tipo categorico nominale. Per questo motivo,
 la correlazione tra queste variabili è stata calcolata usando il metodo Cramer's V che consente di
 misurare il grado di associazione tra questi tipi di variabili. Il metodo è basato sul test del chi quadrato
-e quindi sull'uso di una tabella di contingenza. Un valore prossimo a 1 indica un'alta correlazione. viceversa,
+e quindi sull'uso di una tabella di contingenza. Un valore prossimo a 1 indica un'alta correlazione. Viceversa,
 un valore prossimo a 0 indica che non c'è correlazione tra le variabili.
-Analizzando i dati visivamente si nota che difficilmente ci può essere correlazione tra dominio e country
-o dominio e genere. Questo è confermato dal metodo Cramer's V.
 
 5) Esistono diversi pattern ricorrenti delle mail. Per poter trovare quello più ricorrente,
 sono stati selezionati alcuni tra i pattern più diffusi che sono poi stati confrontati con le mail presenti
@@ -59,15 +57,15 @@ scuole, che nei dati forniti non è presente. Qualora questo sia di elevato inte
 per ottenere questa informazione da qualche sito o database già disponibile ed integrare l'informazione con i dati già a
 disposizione.
 
-7) Le api sono accessibili tramite il notebook invoke_api.ipynb presente nella cartella frontend.
-Il file api_notebook.ipynb presente in develop è una precedente versione usata solamente per velocizzare i test.
-Si faccia riferimento a invoke_api.ipynb per testare le funzionalità rese disponibili usando fastapi.
-
 Altre analisi di interesse dipendono altamente dallo scopo per cui i dati devono essere utilizzati.
 Ulteriori analisi inserite sono:
 	- Verifica della correlazione tra country e gender
-	- Ripartizione del gender per country (potrebbe esserci una correlazione legata alla mentalità e alla tradizione della
+	- Ripartizione del gender per country (potrebbe esserci una correlazione dovuta alla mentalità e cultura della
 	nazione)
+
+7) Le api sono accessibili tramite il notebook 'invoke_api.ipynb' presente nella cartella frontend.
+Il file 'api_notebook.ipynb' presente in develop è una precedente versione usata solamente per velocizzare i test.
+Si faccia riferimento a 'invoke_api.ipynb' per testare le funzionalità rese disponibili usando fastapi.
 
 N.B. I valori usati per controllare il formato dei parametri inseriti (es. first_name, last_name, etc.), sono gli stessi del database.
 Si potrebbe creare un file di configurazione da cui leggerli. In questo caso, sono stati immessi direttamente nel codice per semplicità,
