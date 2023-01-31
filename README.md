@@ -32,8 +32,7 @@ mysql
 mysql > CREATE USER 'NEW_USER'@'localhost' IDENTIFIED BY 'NEW_PASSWORD';
 mysql > GRANT ALL PRIVILEGES ON NEW_DATABASE.* TO 'NEW_USER'@'localhost' WITH GRANT OPTION;
 ```
-N.B. In a real environment, the granted privileges should be limited to avoid giving users unlimited access to the database if this is
-not necessary.
+N.B. In un ambiente reale, i privilegi assegnati dovrebbero essere limitati per evitare di dare accesso illimitato agli utenti quando non è necessario.
 
 **6) Installare tutte le librerie richieste usando il file 'requirements.txt' presente nella cartella del progetto.**
 ```
