@@ -29,16 +29,16 @@ def compute_cramer_V_correlation(contingency_table):
     k = contingency_table.shape[1]
     r = contingency_table.shape[0]
     
-    if n==1 or k==1 or r==1: #Only 1 value for each variable => Full correlation
-        return 1
-    # Compute Cramer's V with correction
-    phi2_tilde = max(0,chi2/n - (k -1)*(r -1)/(n-1))
-    k_tilde = k - ((k-1)**2)/(n-1)
-    r_tilde = r - ((r-1)**2)/(n-1)
-
-    cramerV = np.sqrt(phi2_tilde/min(k_tilde-1,r_tilde-1))
-    return cramerV
-
+    if n!=1:
+        # Compute Cramer's V with correction
+        phi2_tilde = max(0,chi2/n - (k -1)*(r -1)/(n-1))
+        k_tilde = k - ((k-1)**2)/(n-1)
+        r_tilde = r - ((r-1)**2)/(n-1)
+        if k_tilde == 1 or r_tilde == 1: # Full correlation
+            return 1
+        cramerV = np.sqrt(phi2_tilde/min(k_tilde-1,r_tilde-1))
+        return cramerV
+    return 1
     
 
 def create_new_person(engine, first_name, last_name, email, gender, ip_address, country):
