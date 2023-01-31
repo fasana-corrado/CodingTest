@@ -26,17 +26,20 @@ def compute_cramer_V_correlation(contingency_table):
     
     # Compute number of observations
     n = np.sum(contingency_table)
-
-    # Compute Cramer's V with correction
     k = contingency_table.shape[1]
     r = contingency_table.shape[0]
+    
+    if k==1 and r==1: #Only 1 value for each variable => Full correlation
+        return 1
+    # Compute Cramer's V with correction
     phi2_tilde = max(0,chi2/n - (k -1)*(r -1)/(n-1))
     k_tilde = k - ((k-1)**2)/(n-1)
     r_tilde = r - ((r-1)**2)/(n-1)
 
     cramerV = np.sqrt(phi2_tilde/min(k_tilde-1,r_tilde-1))
-
     return cramerV
+
+    
 
 def create_new_person(engine, first_name, last_name, email, gender, ip_address, country):
     '''
@@ -306,6 +309,8 @@ def get_common_email_patterns(engine):
         # Obtain most common patterns
         occurrences = df.iloc[:,3:].sum().sort_values(ascending=False) 
         max_value = occurrences.max()
+        if max_value == 0:
+            return 0
         new_df = occurrences.to_frame(name="Count")
         new_df = new_df[new_df["Count"] == max_value]
 

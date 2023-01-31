@@ -155,8 +155,10 @@ def get_common_email_patterns():
         pattern = api_functionalities.get_common_email_patterns(engine)
         if pattern:
             return f"The most common email pattern is: {pattern}."
-        else:
+        elif pattern is None:
             return "No result found in the database."
+        else:
+            return "None of the analysed patterns is present in the database."
     except Exception as e:
         logging.error(e)
         raise HTTPException(status_code=500)

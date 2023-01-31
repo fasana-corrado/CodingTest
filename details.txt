@@ -70,3 +70,6 @@ Si faccia riferimento a 'invoke_api.ipynb' per testare le funzionalità rese dis
 N.B. I valori usati per controllare il formato dei parametri inseriti (es. first_name, last_name, etc.), sono gli stessi del database.
 Si potrebbe creare un file di configurazione da cui leggerli. In questo caso, sono stati immessi direttamente nel codice per semplicità,
 in quanto i parametri non erano molti.
+
+Una volta ottenuti i dati dalle api, eventualmente è possibile utilizzarli per generare grafici che in alcuni casi possono essere più
+esplicativi rispetto a delle semplici tabelle.
